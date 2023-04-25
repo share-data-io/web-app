@@ -14,14 +14,12 @@ const File = () => {
   // useEffect(() => {
   //   async function getData() {
   //     const r = await getIpfs();
-  //     console.log({ r });
   //   }
 
   //   getData();
   // });
 
   const _renderComponent = () => {
-    console.log({path: location.pathname});
     return <div>
       
       File page

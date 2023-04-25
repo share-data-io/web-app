@@ -6,8 +6,6 @@ const HomeUploadSent = (props) => {
   const { data } = props;
   const [copyDate, setCopyData] = useState({ idx: -1, isCopied: false });
 
-  console.log("Data", data);
-
   const to = _.get(data, "to");
   const postId = _.get(data, "_id");
   return (

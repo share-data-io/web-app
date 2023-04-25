@@ -29,15 +29,9 @@ const HomeForm = (props) => {
   const _onFileAdded = (event) => {
     let files = _.get(form, "files", []);
 
-    console.log({ files, event, fls: event.target.files });
-
     _.each(_.get(event, "target.files", []), (file) => {
       files.push(file);
     });
-
-    console.log({ files });
-
-    console.log({ f: files[0].mozFullPath });
 
     setForm({
       ...form,
@@ -118,8 +112,6 @@ const HomeForm = (props) => {
     localForm[fieldName] = fieldValue;
     // setState({ form: form });
 
-    console.log({form, localForm})
-
     setForm({
       ...form,
       [`${event.target.name}`]: event.target.value
@@ -127,8 +119,6 @@ const HomeForm = (props) => {
   };
 
   const { files } = form;
-
-  console.log({ files, form });
 
   return (
     <div className={"app-card"}>

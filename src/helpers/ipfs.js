@@ -5,7 +5,5 @@ export const getIpfs = async (hash) => {
 
   const response = await axios.get(`${url}`); // from step 1
 
-  console.log({response})
-
   return { data: response };
 };
