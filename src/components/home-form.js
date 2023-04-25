@@ -1,0 +1,221 @@
+import React, { useState } from "react";
+import _ from "lodash";
+import classNames from "classnames";
+import { uploadFiles } from "../helpers/upload";
+
+const HomeForm = (props) => {
+
+  const [form, setForm] = useState({
+    files: [],
+    bucketName: ""
+  });
+
+  const [errors, setErrors] = useState({
+    files: null,
+    bucketName: null
+  });
+
+  const _onFileRemove = (key) => {
+    let { files } = form;
+
+    files.splice(key, 1);
+
+    setForm({
+      ...form,
+      files: files,
+    });
+  };
+
+  const _onFileAdded = (event) => {
+    let files = _.get(form, "files", []);
+
+    console.log({ files, event, fls: event.target.files });
+
+    _.each(_.get(event, "target.files", []), (file) => {
+      files.push(file);
+    });
+
+    console.log({ files });
+
+    console.log({ f: files[0].mozFullPath });
+
+    setForm({
+      ...form,
+      files: files,
+    });
+  };
+
+  const _formValidation = (fields = [], callback = () => {}) => {
+    const validations = {
+      files: [
+        {
+          errorMessage: "File is required.",
+          isValid: () => {
+            return form.files?.length;
+          },
+        },
+      ],
+    };
+
+    let localErrors = errors;
+
+    _.each(fields, (field) => {
+      let fieldValidations = _.get(validations, field, []); // validations[field];
+
+      localErrors[field] = null;
+
+      _.each(fieldValidations, (fieldValidation) => {
+        const isValid = fieldValidation.isValid();
+
+        if (!isValid) {
+          localErrors[field] = fieldValidation.errorMessage;
+        }
+      });
+    });
+
+    setErrors(localErrors);
+
+    let isValid = true;
+    _.each(localErrors, (err) => {
+      if (err !== null) {
+        isValid = false;
+      }
+    });
+    return callback(isValid);
+  };
+
+  const _onSubmit = (event) => {
+    event.preventDefault();
+
+    _formValidation(["files"], async (isValid) => {
+      if (isValid) {
+        // the form is valid and ready to submit.
+
+        const data = form;
+
+        if (props.onUploadBegin) {
+          props.onUploadBegin(data);
+        }
+
+        const response = await uploadFiles(data);
+
+        if (props.onUploadEvent) {
+          props.onUploadEvent({
+            type: "success",
+            payload: response.data,
+          });
+        }
+      }
+    });
+  };
+
+  const _onTextChange = (event) => {
+    const fieldName = event.target.name;
+    const fieldValue = event.target.value;
+
+    let localForm = form
+
+    localForm[fieldName] = fieldValue;
+    // setState({ form: form });
+
+    console.log({form, localForm})
+
+    setForm({
+      ...form,
+      [`${event.target.name}`]: event.target.value
+    });
+  };
+
+  const { files } = form;
+
+  console.log({ files, form });
+
+  return (
+    <div className={"app-card"}>
+      <form onSubmit={_onSubmit}>
+        <div className={"app-card-header"}>
+          <div className={"app-card-header-inner"}>
+            {files && files?.length ? (
+              <div className={"app-files-selected"}>
+                {files.map((file, index) => {
+                  return (
+                    <div key={index} className={"app-files-selected-item"}>
+                      <div className={"filename"}>{file.name}</div>
+                      <div className={"file-action"}>
+                        <button
+                          onClick={() => _onFileRemove(index)}
+                          type={"button"}
+                          className={"app-file-remove"}
+                        >
+                          &#9587;
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            <div
+              className={classNames("app-file-select-zone", {
+                error: _.get(errors, "files"),
+              })}
+            >
+              <label htmlFor={"input-file"}>
+                <input
+                  onChange={_onFileAdded}
+                  id={"input-file"}
+                  type="file"
+                  multiple={true}
+                />
+                {files && files?.length ? (
+                  <span className={"app-upload-description text-uppercase"}>
+                    Add more files
+                  </span>
+                ) : (
+                  <span>
+                    <span className={"app-upload-icon"}>
+                      <i className={"icon-picture-streamline"} />{" "}
+                    </span>
+                    <span className={"app-upload-description"}>
+                      Drag and drop your files here.
+                    </span>
+                  </span>
+                )}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div className={"app-card-content"}>
+          <div className={"app-card-content-inner"}>
+            <div
+                className={classNames("app-form-item", {
+                  error: _.get(errors, "bucketName"),
+                })}
+              >
+                <label htmlFor={"input-bucket-name"}>Bucket label</label>
+                <input
+                  onChange={_onTextChange}
+                  value={form.bucketName}
+                  name={"bucketName"}
+                  placeholder={
+                    _.get(errors, "bucketName") ? _.get(errors, "bucketName") : form.bucketName ? form.bucketName : "Label for your shared data URL"
+                  }
+                  type={"text"}
+                  id={"bucketName"}
+                />
+              </div>
+
+            <div className={"app-form-actions"}>
+              <button type={"submit"} className={"app-button primary"}>
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default HomeForm;
