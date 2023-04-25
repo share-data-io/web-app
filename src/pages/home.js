@@ -60,6 +60,11 @@ const Home = () => {
               setComponentName("HomeUploading");
               setData(respData);
             }}
+            onFail={() => {
+              setComponentName("HomeForm");
+              setData(null);
+              setUploadEvent(null);
+            }}
           />
         );
     }

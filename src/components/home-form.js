@@ -2,17 +2,18 @@ import React, { useState } from "react";
 import _ from "lodash";
 import classNames from "classnames";
 import { uploadFiles } from "../helpers/upload";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const HomeForm = (props) => {
-
   const [form, setForm] = useState({
     files: [],
-    bucketName: ""
+    bucketName: "",
   });
 
   const [errors, setErrors] = useState({
     files: null,
-    bucketName: null
+    bucketName: null,
   });
 
   const _onFileRemove = (key) => {
@@ -79,42 +80,70 @@ const HomeForm = (props) => {
   };
 
   const _onSubmit = (event) => {
-    event.preventDefault();
+    try {
+      event.preventDefault();
 
-    _formValidation(["files"], async (isValid) => {
-      if (isValid) {
-        // the form is valid and ready to submit.
+      _formValidation(["files"], async (isValid) => {
+        try {
+          if (isValid) {
+            // the form is valid and ready to submit.
 
-        const data = form;
+            const data = form;
 
-        if (props.onUploadBegin) {
-          props.onUploadBegin(data);
-        }
+            if (props.onUploadBegin) {
+              props.onUploadBegin(data);
+            }
 
-        const response = await uploadFiles(data);
+            const response = await uploadFiles(data);
 
-        if (props.onUploadEvent) {
-          props.onUploadEvent({
-            type: "success",
-            payload: response.data,
+            if (props.onUploadEvent) {
+              props.onUploadEvent({
+                type: "success",
+                payload: response.data,
+              });
+            }
+          }
+        } catch (e) {
+          toast.error("Error while uploading docs. Try again!", {
+            position: "bottom-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
           });
+          props.onFail(true);
         }
-      }
-    });
+      });
+    } catch (e) {
+      toast.error("Error while uploading docs. Try again!", {
+        position: "bottom-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      props.onFail(true);
+    }
   };
 
   const _onTextChange = (event) => {
     const fieldName = event.target.name;
     const fieldValue = event.target.value;
 
-    let localForm = form
+    let localForm = form;
 
     localForm[fieldName] = fieldValue;
     // setState({ form: form });
 
     setForm({
       ...form,
-      [`${event.target.name}`]: event.target.value
+      [`${event.target.name}`]: event.target.value,
     });
   };
 
@@ -122,6 +151,7 @@ const HomeForm = (props) => {
 
   return (
     <div className={"app-card"}>
+      <ToastContainer />
       <form onSubmit={_onSubmit}>
         <div className={"app-card-header"}>
           <div className={"app-card-header-inner"}>
@@ -179,22 +209,26 @@ const HomeForm = (props) => {
         <div className={"app-card-content"}>
           <div className={"app-card-content-inner"}>
             <div
-                className={classNames("app-form-item", {
-                  error: _.get(errors, "bucketName"),
-                })}
-              >
-                <label htmlFor={"input-bucket-name"}>Bucket label</label>
-                <input
-                  onChange={_onTextChange}
-                  value={form.bucketName}
-                  name={"bucketName"}
-                  placeholder={
-                    _.get(errors, "bucketName") ? _.get(errors, "bucketName") : form.bucketName ? form.bucketName : "Label for your shared data URL"
-                  }
-                  type={"text"}
-                  id={"bucketName"}
-                />
-              </div>
+              className={classNames("app-form-item", {
+                error: _.get(errors, "bucketName"),
+              })}
+            >
+              <label htmlFor={"input-bucket-name"}>Bucket label</label>
+              <input
+                onChange={_onTextChange}
+                value={form.bucketName}
+                name={"bucketName"}
+                placeholder={
+                  _.get(errors, "bucketName")
+                    ? _.get(errors, "bucketName")
+                    : form.bucketName
+                    ? form.bucketName
+                    : "Label for your shared data URL"
+                }
+                type={"text"}
+                id={"bucketName"}
+              />
+            </div>
 
             <div className={"app-form-actions"}>
               <button type={"submit"} className={"app-button primary"}>
