@@ -3,7 +3,7 @@ import _ from "lodash";
 import { v4 as uuid } from "uuid";
 import { upload } from "@spheron/browser-upload";
 
-export const uploadFiles = async (form) => {
+export const uploadFiles = async (form, callback = () => {}) => {
   try {
     const unique_id = uuid();
     const bName = form.bucketName
@@ -21,10 +21,11 @@ export const uploadFiles = async (form) => {
       onChunkUploaded: (uploadedSize, totalSize) => {
         currentlyUploaded += uploadedSize;
         console.log(`Uploaded ${currentlyUploaded} of ${totalSize} Bytes.`);
+        callback(currentlyUploaded)
       },
     });
 
-    return { data: uploadResult };
+    return { data: uploadResult, files };
   } catch (e) {
     throw e;
   }

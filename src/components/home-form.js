@@ -99,7 +99,7 @@ const HomeForm = (props) => {
             if (props.onUploadEvent) {
               props.onUploadEvent({
                 type: "success",
-                payload: response.data,
+                payload: {response: response.data, files: response.files},
               });
             }
           }

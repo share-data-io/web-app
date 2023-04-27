@@ -205,10 +205,10 @@ body {
   font-size: 13px;
 }
 
-a {
+/* a {
   color: #1b65f6;
   text-decoration: none;
-}
+} */
 
 * {
   box-sizing: border-box;
@@ -563,11 +563,11 @@ a {
 }
 .app-progress-loader {
   border: 5px solid #f3f3f3;
-    border-top: 5px solid #1b65f6;
-    border-radius: 50%;
-    width: 75px;
-    height: 75px;
-    animation: spin 2s linear infinite;
+  border-top: 5px solid #1b65f6;
+  border-radius: 50%;
+  width: 75px;
+  height: 75px;
+  animation: spin 2s linear infinite;
 }
 @keyframes spin {
   0% {
@@ -596,27 +596,34 @@ a {
   line-height: 1.5em;
 }
 
-.app-upload-sent-actions, .app-upload-links-div {
+.app-upload-sent-actions,
+.app-upload-links-div {
   margin: 20px 0;
 }
 .app-upload-sent-actions button {
   margin: 10px 0;
 }
 
-.app-upload-link-div{
+.app-upload-link-div {
   display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-  }
-  .app-upload-link{
-    display: block;
-    text-decoration: underline;
-    cursor: default;
-  }
-  .app-upload-link-copy{
-    cursor: pointer;
-  }
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+}
+.app-upload-link {
+  display: block;
+  text-decoration: underline;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #96a3bb
+}
+.app-upload-link-copy:hover, .app-upload-link:hover {
+  color: #1b65f6;
+}
+.app-upload-link-copy {
+  cursor: pointer;
+}
 
 .app-page-download .app-card {
   margin: 0 auto;
@@ -702,10 +709,10 @@ a {
 .app-download-file-list .app-download-file-list-item .filename {
   flex-grow: 1;
 }
-.app-download-file-list .app-download-file-list-item .download-action a {
+/* .app-download-file-list .app-download-file-list-item .download-action a {
   color: #1b65f6;
   text-decoration: none;
-}
+} */
 
 .app-download-actions button {
   margin: 10px 0;
