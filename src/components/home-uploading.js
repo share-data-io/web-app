@@ -3,7 +3,8 @@ import _ from "lodash";
 import { useSelector } from "react-redux";
 import { cancelUpload } from "../helpers/upload";
 import { resetUpload } from "../modules/actions/Upload";
-import {useDispatch} from 'react-redux'
+import { useDispatch } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
 
 const HomeUploading = (props) => {
   const totalFiles = _.get(props.data, "files", []).length;
@@ -31,6 +32,7 @@ const HomeUploading = (props) => {
 
   return (
     <div className={"app-card app-card-uploading"}>
+      <ToastContainer />
       <div className={"app-card-content"}>
         <div className={"app-card-content-inner"}>
           <div className={"app-home-uploading"}>
@@ -54,10 +56,36 @@ const HomeUploading = (props) => {
             <div className={"app-form-actions"}>
               <button
                 onClick={async () => {
-                  await cancelUpload(uploadState.data.deploymentId);
-                  if (props.onCancel) {
-                    dispatch(resetUpload());
-                    props.onCancel(true);
+                  try {
+                    await cancelUpload(
+                      uploadState.data.token,
+                      uploadState.data.deploymentId
+                    );
+                    if (props.onCancel) {
+                      dispatch(resetUpload());
+                      toast.success("File uploading cancelled!", {
+                        position: "bottom-left",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                      });
+                      props.onCancel(true);
+                    }
+                  } catch (e) {
+                    toast.error("Upload not cancelled. Try again!", {
+                      position: "bottom-left",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                    });
                   }
                 }}
                 className={"app-upload-cancel-button app-button"}

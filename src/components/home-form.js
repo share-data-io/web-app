@@ -3,7 +3,6 @@ import _ from "lodash";
 import classNames from "classnames";
 import { uploadFiles } from "../helpers/upload";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import {
   uploadUpdate,
@@ -104,19 +103,30 @@ const HomeForm = (props) => {
             }
 
             const response = await uploadFiles(data, (data) => {
-              if (data.deploymentId && !data.current && !data.total)
-                dispatch(uploadStart({ deploymentId: data.deploymentId }));
+              if ((data.deploymentId || data.token) && !data.current && !data.total)
+                dispatch(uploadStart({ deploymentId: data.deploymentId, token: data.token }));
               else
                 dispatch(
                   uploadUpdate({
                     current: data.current,
                     total: data.total,
                     deploymentId: data.deploymentId,
+                    token: data.token
                   })
                 );
             });
 
             if (props.onUploadEvent) {
+              toast.success("Data uploaded successfully!", {
+                position: "bottom-left",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
               props.onUploadEvent({
                 type: "success",
                 payload: { response: response.data, files: response.files },

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch } from "react-redux";
 import { resetUpload } from "../modules/actions/Upload";
+import { ToastContainer } from "react-toastify";
 
 const HomeUploadSent = (props) => {
   const { data: propsData } = props;
@@ -12,6 +13,7 @@ const HomeUploadSent = (props) => {
 
   return (
     <div className={"app-card app-card-upload-sent"}>
+      <ToastContainer />
       <div className={"app-card-content"}>
         <div className={"app-card-content-inner"}>
           <div className={"app-home-uploading"}>

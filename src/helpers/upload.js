@@ -2,6 +2,7 @@ import axios from "axios";
 import _ from "lodash";
 import { v4 as uuid } from "uuid";
 import { upload } from "@spheron/browser-upload";
+import jwt_decode from "jwt-decode";
 
 export const uploadFiles = async (form, callback = () => {}) => {
   try {
@@ -22,7 +23,7 @@ export const uploadFiles = async (form, callback = () => {}) => {
     );
 
     let currentlyUploaded = 0;
-    callback({ deploymentId });
+    callback({ deploymentId, token });
     const uploadResult = await upload(files, {
       token,
       onChunkUploaded: (uploadedSize, totalSize) => {
@@ -32,6 +33,7 @@ export const uploadFiles = async (form, callback = () => {}) => {
           current: currentlyUploaded,
           total: realTotalSize,
           deploymentId,
+          token,
         });
       },
     });
@@ -42,14 +44,19 @@ export const uploadFiles = async (form, callback = () => {}) => {
   }
 };
 
-export const cancelUpload = async (deploymentId) => {
+export const cancelUpload = async (token, uploadId) => {
   try {
+    let deploymentId;
+    if (!uploadId) {
+      const jwtPayload = jwt_decode(token);
+      deploymentId = jwtPayload.deploymentId;
+    } else {
+      deploymentId = uploadId;
+    }
     const url = `${process.env.REACT_APP_API_URL}/cancel-upload`;
-
     const response = await axios.post(`${url}`, { deploymentId });
     return response;
   } catch (e) {
-    // throw e;
-    return true
+    throw e;
   }
 };
