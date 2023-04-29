@@ -13,20 +13,43 @@ export const uploadFiles = async (form, callback = () => {}) => {
 
     const response = await axios.get(`${url}`); // from step 1
     const token = response.data.uploadToken;
+    const deploymentId = response.data.deploymentId;
     let files = _.get(form, "files", []);
 
+    const realTotalSize = files.reduce(
+      (partialSum, a) => partialSum + a.size,
+      0
+    );
+
     let currentlyUploaded = 0;
+    callback({ deploymentId });
     const uploadResult = await upload(files, {
       token,
       onChunkUploaded: (uploadedSize, totalSize) => {
         currentlyUploaded += uploadedSize;
-        console.log(`Uploaded ${currentlyUploaded} of ${totalSize} Bytes.`);
-        callback(currentlyUploaded)
+
+        callback({
+          current: currentlyUploaded,
+          total: realTotalSize,
+          deploymentId,
+        });
       },
     });
 
     return { data: uploadResult, files };
   } catch (e) {
     throw e;
+  }
+};
+
+export const cancelUpload = async (deploymentId) => {
+  try {
+    const url = `${process.env.REACT_APP_API_URL}/cancel-upload`;
+
+    const response = await axios.post(`${url}`, { deploymentId });
+    return response;
+  } catch (e) {
+    // throw e;
+    return true
   }
 };

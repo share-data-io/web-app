@@ -343,23 +343,28 @@ body {
   display: block;
   text-align: center;
   padding: 10px 0 0 0;
+  cursor: pointer;
 }
 .app-file-select-zone label {
   display: block;
   width: 100%;
+  cursor: pointer;
 }
 .app-file-select-zone label input {
   position: fixed;
+  cursor: pointer;
   top: -9999px;
 }
 .app-file-select-zone .app-upload-description {
   font-size: 12px;
+  cursor: pointer;
   display: block;
 }
 .app-file-select-zone .app-upload-icon {
   display: inline-block;
   margin-bottom: 10px;
   width: 60px;
+  cursor: pointer;
   height: 30px;
   border: 1px dashed #96a3bb;
   position: relative;
@@ -367,11 +372,13 @@ body {
 .app-file-select-zone .app-upload-icon i {
   position: absolute;
   left: 10px;
+  cursor: pointer;
   top: -10px;
   background: #f3f7ff;
   font-size: 28px;
 }
 .app-file-select-zone.error .app-upload-icon {
+  cursor: pointer;
   border-color: #d0152e;
 }
 
@@ -568,6 +575,13 @@ body {
   width: 75px;
   height: 75px;
   animation: spin 2s linear infinite;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+.app-progress-loader-text {
+  font-weight: 700;
+  animation: spin-negative 2s linear infinite;
 }
 @keyframes spin {
   0% {
@@ -575,6 +589,14 @@ body {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@keyframes spin-negative {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
   }
 }
 

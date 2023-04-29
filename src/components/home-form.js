@@ -4,11 +4,20 @@ import classNames from "classnames";
 import { uploadFiles } from "../helpers/upload";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import {
+  uploadUpdate,
+  uploadStart,
+  failureUploading,
+  successUploading,
+} from "../modules/actions/Upload";
 
 const HomeForm = (props) => {
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
     files: [],
     bucketName: "",
+    deploymentId: null,
   });
 
   const [errors, setErrors] = useState({
@@ -94,16 +103,30 @@ const HomeForm = (props) => {
               props.onUploadBegin(data);
             }
 
-            const response = await uploadFiles(data);
+            const response = await uploadFiles(data, (data) => {
+              if (data.deploymentId && !data.current && !data.total)
+                dispatch(uploadStart({ deploymentId: data.deploymentId }));
+              else
+                dispatch(
+                  uploadUpdate({
+                    current: data.current,
+                    total: data.total,
+                    deploymentId: data.deploymentId,
+                  })
+                );
+            });
 
             if (props.onUploadEvent) {
               props.onUploadEvent({
                 type: "success",
-                payload: {response: response.data, files: response.files},
+                payload: { response: response.data, files: response.files },
               });
             }
+
+            dispatch(successUploading());
           }
         } catch (e) {
+          dispatch(failureUploading(e));
           toast.error("Error while uploading docs. Try again!", {
             position: "bottom-left",
             autoClose: 5000,
@@ -198,7 +221,7 @@ const HomeForm = (props) => {
                       <i className={"icon-picture-streamline"} />{" "}
                     </span>
                     <span className={"app-upload-description"}>
-                      Drag and drop your files here.
+                      Click here to upload your file.
                     </span>
                   </span>
                 )}
