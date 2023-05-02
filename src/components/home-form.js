@@ -1,17 +1,20 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import classNames from "classnames";
 import { uploadFiles } from "../helpers/upload";
 import { toast, ToastContainer } from "react-toastify";
-import { useDispatch } from "react-redux";
 import {
   uploadUpdate,
   uploadStart,
   failureUploading,
   successUploading,
+  resetUpload,
 } from "../modules/actions/Upload";
 
 const HomeForm = (props) => {
+  const uploadState = useSelector((s) => s.Upload);
+
   const dispatch = useDispatch();
   const [form, setForm] = useState({
     files: [],
@@ -103,15 +106,24 @@ const HomeForm = (props) => {
             }
 
             const response = await uploadFiles(data, (data) => {
-              if ((data.deploymentId || data.token) && !data.current && !data.total)
-                dispatch(uploadStart({ deploymentId: data.deploymentId, token: data.token }));
+              if (
+                (data.deploymentId || data.token) &&
+                !data.current &&
+                !data.total
+              )
+                dispatch(
+                  uploadStart({
+                    deploymentId: data.deploymentId,
+                    token: data.token,
+                  })
+                );
               else
                 dispatch(
                   uploadUpdate({
                     current: data.current,
                     total: data.total,
                     deploymentId: data.deploymentId,
-                    token: data.token
+                    token: data.token,
                   })
                 );
             });
@@ -136,18 +148,32 @@ const HomeForm = (props) => {
             dispatch(successUploading());
           }
         } catch (e) {
-          dispatch(failureUploading(e));
-          toast.error("Error while uploading docs. Try again!", {
-            position: "bottom-left",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-          props.onFail(true);
+          if (uploadState.isCancelled) {
+            toast.success("File uploading cancelled!", {
+              position: "bottom-left",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+            dispatch(resetUpload());
+          } else {
+            dispatch(failureUploading(e));
+            toast.error("Error while uploading docs. Try again!", {
+              position: "bottom-left",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+            props.onFail(true);
+          }
         }
       });
     } catch (e) {

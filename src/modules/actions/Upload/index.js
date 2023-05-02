@@ -3,7 +3,8 @@ import {
   UPLOAD_SUCCESS,
   UPLOAD_FAILURE,
   UPLOAD_CHANGE,
-  UPLOAD_RESET
+  UPLOAD_RESET,
+  UPLOAD_CANCEL,
 } from "../../actionTypes/Upload/Types";
 
 export const uploadStart = (data = {}) => {
@@ -62,7 +63,13 @@ export function updateUpload(data) {
 }
 
 export function resetUpload() {
-    return {
-      type: UPLOAD_RESET,
-    };
-  }
+  return {
+    type: UPLOAD_RESET,
+  };
+}
+
+export function cancelUpload() {
+  return {
+    type: UPLOAD_CANCEL,
+  };
+}

@@ -4,6 +4,7 @@ import {
   UPLOAD_FAILURE,
   UPLOAD_CHANGE,
   UPLOAD_RESET,
+  UPLOAD_CANCEL
 } from "../../actionTypes/Upload/Types";
 
 //Set initial state for owner
@@ -12,6 +13,7 @@ const initialState = {
   loading: false,
   error: null,
   isCompleted: false,
+  isCancelled: false,
 };
 
 //Export new state using switch
@@ -23,6 +25,7 @@ const homeReducer = (state = initialState, action = {}) => {
         isCompleted: false,
         loading: true,
         error: null,
+        isCancelled: false,
       };
 
     case UPLOAD_CHANGE:
@@ -31,6 +34,7 @@ const homeReducer = (state = initialState, action = {}) => {
         isCompleted: false,
         loading: true,
         error: null,
+        isCancelled: false,
       };
 
     case UPLOAD_SUCCESS:
@@ -39,6 +43,7 @@ const homeReducer = (state = initialState, action = {}) => {
         loading: false,
         error: false,
         isCompleted: action.payload,
+        isCancelled: false,
       };
     case UPLOAD_FAILURE:
       return {
@@ -53,6 +58,16 @@ const homeReducer = (state = initialState, action = {}) => {
         loading: false,
         error: null,
         isCompleted: false,
+        isCancelled: false,
+      };
+
+    case UPLOAD_CANCEL:
+      return {
+        data: {},
+        loading: false,
+        error: null,
+        isCompleted: false,
+        isCancelled: true,
       };
 
     default:

@@ -54,7 +54,7 @@ export const cancelUpload = async (token, uploadId) => {
       deploymentId = uploadId;
     }
     const url = `${process.env.REACT_APP_API_URL}/cancel-upload`;
-    const response = await axios.post(`${url}`, { deploymentId });
+    const response = await axios.post(`${url}`, { token, deploymentId });
     return response;
   } catch (e) {
     throw e;

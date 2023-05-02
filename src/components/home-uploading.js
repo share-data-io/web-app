@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import { useSelector } from "react-redux";
-import { cancelUpload } from "../helpers/upload";
-import { resetUpload } from "../modules/actions/Upload";
+import { cancelUpload as cancelUploadApi} from "../helpers/upload";
+import { cancelUpload } from "../modules/actions/Upload";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -57,12 +57,12 @@ const HomeUploading = (props) => {
               <button
                 onClick={async () => {
                   try {
-                    await cancelUpload(
+                    await cancelUploadApi(
                       uploadState.data.token,
                       uploadState.data.deploymentId
                     );
                     if (props.onCancel) {
-                      dispatch(resetUpload());
+                      dispatch(cancelUpload());
                       toast.success("File uploading cancelled!", {
                         position: "bottom-left",
                         autoClose: 5000,
