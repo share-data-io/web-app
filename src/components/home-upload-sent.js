@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch } from "react-redux";
 import { resetUpload } from "../modules/actions/Upload";
@@ -7,9 +7,17 @@ import { ToastContainer } from "react-toastify";
 const HomeUploadSent = (props) => {
   const { data: propsData } = props;
   const { response: data, files } = propsData;
-  const [copyDate, setCopyData] = useState({ idx: -1, isCopied: false });
+  const [copyData, setCopyData] = useState({ idx: -1, isCopied: false });
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (copyData.idx !== -1 && copyData.isCopied) {
+      setTimeout(() => {
+        setCopyData({ idx: -1, isCopied: false });
+      }, 5000);
+    }
+  }, [copyData.idx, copyData.isCopied]);
 
   return (
     <div className={"app-card app-card-upload-sent"}>
@@ -32,7 +40,10 @@ const HomeUploadSent = (props) => {
                   <div className="app-upload-link-div">
                     {files.length === 1 ? (
                       <a
-                        href={`https://${link}/${files[0].name}`}
+                        href={`https://${link}/${files[0].name.replaceAll(
+                          " ",
+                          "%20"
+                        )}`}
                         target="_blank"
                         className="app-upload-link"
                         rel="noreferrer"
@@ -49,12 +60,14 @@ const HomeUploadSent = (props) => {
                     )}
                     <CopyToClipboard
                       text={
-                        files.length === 1 ? `${link}/${files[0].name}` : link
+                        files.length === 1
+                          ? `${link}/${files[0].name.replaceAll(" ", "%20")}`
+                          : link
                       }
                       onCopy={() => setCopyData({ idx: key, isCopied: true })}
                     >
                       <div className="app-upload-link-copy">
-                        {copyDate.idx === key && copyDate.isCopied ? (
+                        {copyData.idx === key && copyData.isCopied ? (
                           <ion-icon name="checkmark-outline"></ion-icon>
                         ) : (
                           <ion-icon name="copy-outline"></ion-icon>
@@ -67,7 +80,10 @@ const HomeUploadSent = (props) => {
                 <div className="app-upload-link-div">
                   {files.length === 1 ? (
                     <a
-                      href={`${data?.protocolLink}/${files[0].name}`}
+                      href={`${data?.protocolLink}/${files[0].name.replaceAll(
+                        " ",
+                        "%20"
+                      )}`}
                       target="_blank"
                       className="app-upload-link"
                       rel="noreferrer"
@@ -85,13 +101,16 @@ const HomeUploadSent = (props) => {
                   <CopyToClipboard
                     text={
                       files.length === 1
-                        ? `${data?.protocolLink}/${files[0].name}`
+                        ? `${data?.protocolLink}/${files[0].name.replaceAll(
+                            " ",
+                            "%20"
+                          )}`
                         : data?.protocolLink
                     }
                     onCopy={() => setCopyData({ idx: -2, isCopied: true })}
                   >
                     <div className="app-upload-link-copy">
-                      {copyDate.idx === -2 && copyDate.isCopied ? (
+                      {copyData.idx === -2 && copyData.isCopied ? (
                         <ion-icon name="checkmark-outline"></ion-icon>
                       ) : (
                         <ion-icon name="copy-outline"></ion-icon>

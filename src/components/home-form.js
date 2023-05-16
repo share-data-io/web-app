@@ -172,6 +172,7 @@ const HomeForm = (props) => {
               progress: undefined,
               theme: "colored",
             });
+            dispatch(resetUpload());
             props.onFail(true);
           }
         }
@@ -187,6 +188,7 @@ const HomeForm = (props) => {
         progress: undefined,
         theme: "colored",
       });
+      dispatch(resetUpload());
       props.onFail(true);
     }
   };
