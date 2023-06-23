@@ -61,8 +61,8 @@ const HomeUploadSent = (props) => {
                     <CopyToClipboard
                       text={
                         files.length === 1
-                          ? `${link}/${files[0].name.replaceAll(" ", "%20")}`
-                          : link
+                          ? `https://${link}/${files[0].name.replaceAll(" ", "%20")}`
+                          : `https://${link}`
                       }
                       onCopy={() => setCopyData({ idx: key, isCopied: true })}
                     >
